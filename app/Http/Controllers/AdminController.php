@@ -1,0 +1,163 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\User;
+use App\Models\Course;
+use App\Models\Content;
+use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules;
+use Illuminate\Support\Facades\Hash;
+
+
+class AdminController extends Controller
+{
+    public function users() {
+        if (request('search')) {
+            $data = User::where('name', 'like', '%'. request('search') . '%', 'or', 'role', 'like', '%'. request('search') . '%' )->paginate(20)->withQueryString();
+        } else {
+            $data = User::where('role', '<>', 'admin')->paginate(20)->withQueryString();
+        }
+        return view('Admin/usersadmin',['users' => $data]);
+    }
+
+    public function courses() {
+        if (request('search')) {
+            $data = User::join('courses', 'users.id', '=', 'courses.teacher_id')->where('course_name', 'like', '%'. request('search') . '%' )
+            ->select('users.name', 'courses.*')->paginate(20)->withQueryString();
+        } else {
+            $data = User::join('courses', 'users.id', '=', 'courses.teacher_id')
+            ->select('users.name', 'courses.*')->paginate(20)->withQueryString();
+        }
+
+        return view('Admin/course', ['courses' => $data]);
+    
+    }
+
+
+  
+    public function createUser(Request $request) {
+        $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'role' => ['required', 'in:admin,teacher,student']
+        ]);
+
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'role' => $request->role,
+            'password' => Hash::make($request->password),
+        ]);
+
+        $data = User::where('role', '<>', 'admin')->paginate(20)->withQueryString();
+        return view('Admin/usersadmin',['users' => $data]);
+    }
+
+    
+    public function createCourse(Request $request) {
+        $request->validate([
+            'course_name' => ['required', 'string', 'max:255', 'unique:courses'],
+            'start' => ['required', 'date'],
+            'end' => ['required', 'date', 'after_or_equal:start'],
+            'teacher_id' => ['required', 'exists:users,id,role,teacher'],
+            'description' => ['required', 'string'],
+        ]);
+        
+    
+        $user = Course::create([
+            'course_name' => $request->course_name,
+            'start_date'=> $request->start,
+            'end_date' => $request->end,
+            'teacher_id' => $request->teacher_id,
+            'description' => $request->description,
+        ]);
+        
+
+        $idcourse = Course::latest()->value('id');
+        return redirect(route('admin-create-content', ['idcourse' => $idcourse]));
+    }
+
+    public function createcontent($idcourse) {
+        return view('Admin/createcontent', ['idcourse' => $idcourse]);
+    }
+
+    public function savecontent(Request $request) {
+        $request->validate([
+            'title' => ['required', 'string', 'max:255'],
+            'content' => ['required', 'string']  
+        ]);
+    
+        $content = Content::create([
+            'title' => $request->title,
+            'content' => $request->content,  
+            'course_id' => $request->course_id
+        ]);
+    
+        return view('Admin/createcontent', ['idcourse' => $request->course_id]);
+    }
+    
+    public function edit(string $id)
+    {
+        $data = User::where('id', $id)->get();
+        return view('Admin/edituser', [
+        'data'=> $data
+        ]);
+    }
+
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($id)],
+
+        ]);
+
+        $user = User::find($id);
+
+        $user->update([
+            'name' => $request->name,
+            'email' => $request->email,
+        ]);
+
+        $data = User::join('courses', 'users.id', '=', 'courses.teacher_id')
+            ->select('users.name', 'courses.*')->paginate(20)->withQueryString();
+
+        return redirect(route('admin-users', ['courses' => $data]) );
+
+    }
+
+    public function courseDetail($idcourse){
+        $course = Course::find($idcourse);
+        $contents = Content::where('course_id', $idcourse)->get();
+    
+        return view('Admin/course-detail', ['course' => $course, 'contents' => $contents]);
+    }
+    
+
+   
+
+    public function destroy($id)
+    {
+        $data = User::find($id);
+        $data->delete();
+
+
+        $data1 = User::join('courses', 'users.id', '=', 'courses.teacher_id')
+            ->select('users.name', 'courses.*')->paginate(20)->withQueryString();
+
+        return redirect(route('admin-users', ['courses' => $data1]) );
+
+    }
+
+
+    public function destroycontent($id) {
+        $data = Course::find($id);
+        $data->delete();
+
+        return redirect(route('admin-manage-courses'));
+    }
+
+}
