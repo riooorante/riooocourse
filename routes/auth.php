@@ -76,8 +76,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/admin/createcontent/{idcourse}', [AdminController::class, 'createcontent'])->name('admin-create-content');
         Route::post('/admin/savecontent', [AdminController::class, 'savecontent'])->name('admin-save-content');
         Route::get('/admin/course-detail/{idcourse}', [AdminController::class, 'courseDetail'])->name('admin-course-detail');
-        Route::get('/admin/confirmation/{id}', function($id) {
-            return view('Admin/confirm', ['id' => $id]);
-        })->name('admin-confirmation');        
+        Route::get('/admin/confirmation/{id}', [AdminController::class, 'confirmation'])->name('admin-confirmation');      
+        Route::get('/admin/editcourse/{idcourse}', [AdminController::class, 'editcourse'])->name('admin-edit-course');  
+        Route::put('/admin/editcourse/user/{id}', [AdminController::class, 'updatecourse'])->name('admin-course-update');
     });
 });

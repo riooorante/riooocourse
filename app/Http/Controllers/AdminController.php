@@ -65,7 +65,7 @@ class AdminController extends Controller
     public function createCourse(Request $request)
     {
         $request->validate([
-            'course_name' => ['required', 'string', 'max:255', 'unique:courses'],
+            'course_name' => ['required', 'string', 'max:255'],
             'start' => ['required', 'date'],
             'end' => ['required', 'date', 'after_or_equal:start'],
             'teacher_id' => ['required', 'exists:users,id,role,teacher'],
@@ -113,6 +113,14 @@ class AdminController extends Controller
         ]);
     }
 
+    public function editcourse(string $id)
+    {
+        $data = Course::where('id', $id)->get();
+        return view('Admin/edit-course', [
+            'data' => $data
+        ]);
+    }
+
     public function update(Request $request, $id)
     {
         $request->validate([
@@ -131,6 +139,38 @@ class AdminController extends Controller
             ->select('users.name', 'courses.*')->paginate(20)->withQueryString();
 
         return redirect(route('admin-users', ['courses' => $data]));
+    }
+
+    public function updateCourse(Request $request, $id)
+    {
+        $request->validate([
+            'course_name' => ['required', 'string', 'max:255'],
+            'start' => ['required', 'date'],
+            'end' => ['required', 'date', 'after_or_equal:start'],
+            'teacher_id' => ['required', 'exists:users,id,role,teacher'],
+            'description' => ['required', 'string'],
+        ]);
+
+        $course = Course::find($id);
+
+        $course->update([
+            'course_name' => $request->course_name,
+            'start_date' => $request->start,
+            'end_date' => $request->end,
+            'teacher_id' => $request->teacher_id,
+            'description' => $request->description,
+        ]);
+
+        $query = User::join('courses', 'users.id', '=', 'courses.teacher_id')
+            ->select('users.name', 'courses.*');
+
+        if (request('search')) {
+            $query->where('course_name', 'like', '%' . request('search') . '%');
+        }
+
+        $data = $query->paginate(20)->withQueryString();
+
+        return view('Admin/course', ['courses' => $data]);
     }
 
     public function courseDetail($idcourse)
@@ -158,5 +198,12 @@ class AdminController extends Controller
         $data->delete();
 
         return redirect(route('admin-manage-courses'));
+    }
+
+    public function confirmation($id) {
+        $course = Course::find($id);
+        $contents = Content::where('course_id', $id)->get();
+
+        return view('Admin/confirm', ['course'=>$course, 'content'=>$contents]);
     }
 }

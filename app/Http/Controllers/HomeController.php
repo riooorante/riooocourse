@@ -12,8 +12,7 @@ class HomeController extends Controller
     public function index() {
         if (Auth::check()) {
             if (Auth::user()->role == 'admin') {
-                $myData = User::find(Auth::user()->id)->first();
-                return view('Admin/admin', compact('myData'));
+                return view('Admin/dashboard');
             }
         }
         return view('guess/home');

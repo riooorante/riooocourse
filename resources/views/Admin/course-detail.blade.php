@@ -5,7 +5,9 @@
 
 <div class="container flex flex-wrap mx-auto mt-10 mb-10 justify-center items-center">
     <p class="mb-6 text-lg font-normal text-gray-500 lg:text-xl sm:px-16 xl:px-48 dark:text-gray-400">{{$course->description}}</p>
-
+    <a href="{{ route('admin-create-content', ['idcourse' => $course->id]) }}" class="m-4 inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+        + Add New Content
+    </a>
 </div>
 
         @if(count($contents) > 0)
@@ -17,7 +19,7 @@
                             Name
                         </th>
                         <th scope="col" class="px-6 py-3">
-                            Position
+                            Status
                         </th>
                         <th scope="col" class="px-6 py-3">
                             Action
@@ -34,7 +36,7 @@
                                 </div>  
                             </th>
                             <td class="px-6 py-4">
-                                React Developer
+                                On Progress
                             </td>
                             <td class="px-6 py-4">
                                 <a href="#" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit Content</a>
