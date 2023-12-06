@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\ContentController;
+use App\Models\Content;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\StudentController;
@@ -79,5 +81,15 @@ Route::middleware('auth')->group(function () {
         Route::get('/admin/confirmation/{id}', [AdminController::class, 'confirmation'])->name('admin-confirmation');      
         Route::get('/admin/editcourse/{idcourse}', [AdminController::class, 'editcourse'])->name('admin-edit-course');  
         Route::put('/admin/editcourse/user/{id}', [AdminController::class, 'updatecourse'])->name('admin-course-update');
+
+        Route::resource('/admin', ContentController::class)->names([
+            'index' => 'admin-show',
+            'create' => 'admin-content.create',
+            'store' => 'admin-content.store',
+            'show' => 'admin-content.show',
+            'edit' => 'admin-content.edit',
+            'update' => 'admin-content.update',
+            'destroy' => 'admin-content.destroy',
+        ]);
     });
 });

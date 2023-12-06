@@ -176,9 +176,9 @@ class AdminController extends Controller
     public function courseDetail($idcourse)
     {
         $course = Course::find($idcourse);
-        $contents = Content::where('course_id', $idcourse)->get();
+        $content = Content::where('course_id', $idcourse)->get();
 
-        return view('Admin/course-detail', ['course' => $course, 'contents' => $contents]);
+        return view('Admin/course-detail', ['course' => $course, 'content' => $content]);
     }
 
     public function destroy($id)
