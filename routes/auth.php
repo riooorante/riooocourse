@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ContentController;
 use App\Http\Controllers\CourseController;
+use App\Http\Controllers\UserCourseController;
 use App\Models\Content;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminController;
@@ -126,26 +127,33 @@ Route::middleware('auth')->group(function () {
             
             Route::resource('/student/courses', CourseController::class)->names([
                 'index' => 'student-courses',
-                'create' => 'teacher-course.create',
-                'store' => 'teacher-course.store',
-                'show' => 'admin-course.show',
-                'edit' => 'teacher-course.edit',
-                'update' => 'teacher-course.update',
-                'destroy' => 'teacher-course.destroy',
+                'create' => 'student-course.create',
+                'store' => 'student-course.store',
+                'show' => 'student-course.show',
+                'edit' => 'student-course.edit',
+                'update' => 'student-course.update',
+                'destroy' => 'studentr-course.destroy',
             ]);
         
-            Route::resource('/teacher/contents', ContentController::class)->names([
-                'index' => 'admin-show-contents',
-                
-                'store' => 'teacher-content.store',
-                'show' => 'admin-content.show',
-                'edit' => 'teacher-content.edit',
-                'update' => 'teacher-content.update',
-                'destroy' => 'teacher-content.destroy',
+            Route::resource('/student/contents', ContentController::class)->names([
+                'index' => 'student-show-contents',
+                'store' => 'student-content.store',
+                'show' => 'student-content.show',
+                'edit' => 'student-content.edit',
+                'update' => 'student-content.update',
+                'destroy' => 'student-content.destroy',
             ]);
 
-            Route::get('/teacher/contents/create-content/{idcourse}', [ContentController::class, 'createContent'])->name('teacher-add-content');
-            Route::get('/teacher/courses/confirmation/{id}', [AdminController::class, 'confirmation'])->name('teacher-confirmation'); 
-            Route::get('/teacher/course-detail/{idcourse}', [AdminController::class, 'courseDetail'])->name('teacher-course-detail');
+            Route::resource('/student/usercourses', UserCourseController::class)->names([
+                'index' => 'student-usercourses',
+                'create' => 'student-course.create',
+                'store' => 'student-usercourse.store',
+                'show' => 'student-course.show',
+                'edit' => 'student-course.edit',
+                'update' => 'student-course.update',
+                'destroy' => 'studentr-course.destroy',
+            ]);
+            
+            Route::get('//student/usercourses/showpages/{idcourse}', [ContentController::class, 'showCoursePages'])->name('learning-page');
         });
 });

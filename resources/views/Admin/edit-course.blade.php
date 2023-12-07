@@ -19,12 +19,12 @@
                         </div>
                         <div class="mt-4">
                             <x-input-label for="start" :value="__('Start')" />
-                            <input id="start" class="block mt-1 w-full" type="date" name="start" :value="$data[0]->start_date" required />
+                            <input id="start" class="block mt-1 w-full" type="date" name="start" value="{{$data[0]->start_date}}" required />
                             <x-input-error :messages="$errors->get('start')" class="mt-2" />
                         </div>
                         <div class="mt-4">
                             <x-input-label for="end" :value="__('End')" />
-                            <input id="end" class="block mt-1 w-full" type="date" name="end" :value="$data[0]->end_date" required />
+                            <input id="end" class="block mt-1 w-full" type="date" name="end" value="{{$data[0]->end_date}}" required />
                             <x-input-error :messages="$errors->get('end')" class="mt-2" />
                         </div>
                         <div class="sm:col-span-2 mt-4">

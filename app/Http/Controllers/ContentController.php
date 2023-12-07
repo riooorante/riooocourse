@@ -16,7 +16,28 @@ class ContentController extends Controller
      */
     public function index()
     {
-        //
+        $user = Auth::user();
+    $studentcourse = $user->studentcourse;
+
+    $courseIdToInclude = 123; // Replace with the specific course_id you want to include
+
+    $contents = Content::whereIn('course_id', $studentcourse->pluck('id'))
+                      ->where('course_id', $courseIdToInclude)
+                      ->paginate(1);
+
+    return view('Student/course-page', ['contents' => $contents]);
+    }
+
+    public function showCoursePages($id)
+    {
+        $user = Auth::user();
+        $studentcourse = $user->studentcourse;
+
+        $contents = Content::whereIn('course_id', $studentcourse->pluck('id'))
+                        ->where('course_id', $id)
+                        ->paginate(1);
+
+        return view('Student/course-page', ['contents' => $contents]);
     }
 
     /**
@@ -72,9 +93,9 @@ class ContentController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function userContents()
     {
-        //
+        
     }
 
     /**

@@ -33,16 +33,24 @@ class CourseController extends Controller
                 return view('Teacher/courses', ['courses' => $data]);
 
             } elseif (Auth::user()->role == 'student'){
+                $userId = Auth::user()->id;
+
                 $query = User::join('courses', 'users.id', '=', 'courses.teacher_id')
-                ->select('users.name', 'courses.*');
-            
+                    ->select('users.name', 'courses.*')
+                    ->whereNotIn('courses.id', function ($subquery) use ($userId) {
+                        $subquery->select('course_id')
+                            ->from('user_course')
+                            ->where('user_id', '=', $userId);
+                    });
+
                 if (request('search')) {
                     $query->where(function ($query) {
                         $query->where('course_name', 'like', '%' . request('search') . '%');
                     });
                 }
+
                 $data = $query->paginate(10)->withQueryString();
-                
+
                 return view('Student/courses', ['courses' => $data]);
             }
         }
