@@ -25,9 +25,9 @@
 <body class="flex flex-col min-h-screen">
    
 
-    <div class="flex-grow">
+    
         @yield('content')
-    </div>
+    
     
 
 </body>

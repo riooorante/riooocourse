@@ -8,6 +8,7 @@ use App\Models\Content;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class AdminController extends Controller
@@ -175,10 +176,23 @@ class AdminController extends Controller
 
     public function courseDetail($idcourse)
     {
-        $course = Course::find($idcourse);
-        $content = Content::where('course_id', $idcourse)->get();
+        
+        if (Auth::check()) {
+            if (Auth::user()->role == 'admin') {
+                $course = Course::find($idcourse);
+                $content = Content::where('course_id', $idcourse)->get();
 
-        return view('Admin/course-detail', ['course' => $course, 'content' => $content]);
+                return view('Admin/course-detail', ['course' => $course, 'content' => $content]);
+            } elseif (Auth::user()->role == 'teacher') {
+                $course = Course::find($idcourse);
+                $content = Content::where('course_id', $idcourse)->get();
+
+                return view('Teacher/course-detail', ['course' => $course, 'content' => $content]);
+
+            } elseif (Auth::user()->role == 'student'){
+                return view('Student/dashboard');
+            }
+        }
     }
 
     public function destroy($id)
@@ -201,9 +215,19 @@ class AdminController extends Controller
     }
 
     public function confirmation($id) {
-        $course = Course::find($id);
-        $contents = Content::where('course_id', $id)->get();
+        if (Auth::check()) {
+            if (Auth::user()->role == 'admin') {
+                return view('Admin/dashboard');
+            } elseif (Auth::user()->role == 'teacher') {
+                $course = Course::find($id);
+                $contents = Content::where('course_id', $id)->get();
+        
+                return view('Teacher/confirmation', ['course'=>$course, 'content'=>$contents]);
 
-        return view('Admin/confirm', ['course'=>$course, 'content'=>$contents]);
+            } elseif (Auth::user()->role == 'student'){
+                return view('Student/dashboard');
+            }
+        }
+      
     }
 }

@@ -22,9 +22,6 @@
         </div>
     </div>
     <div class="container flex flex-wrap mx-auto mt-10 mb-10 justify-center items-center">
-   
-        
-
         @if(count($courses) > 0)
             @foreach ($courses as $course)
                 <div class="max-w-sm m-10 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
@@ -40,7 +37,7 @@
                         <a href="{{ route('admin-edit-course', ['idcourse' => $course->id]) }}" class="m-4 inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
                             Edit
                         </a>
-                        <form action="{{ route('admin-course-delete', $course->id) }}" method="POST" onsubmit=" return confirm('Are you sure you want to delete?') ">
+                        <form action="{{ route('teacher-course.destroy', $course->id) }}" method="POST" onsubmit=" return confirm('Are you sure you want to delete?') ">
                             {{ csrf_field() }}
                             {{ method_field('DELETE') }} 
                             <button type="submit" class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
@@ -54,7 +51,6 @@
         @else
         <p class="flex flex-wrap mx-auto mt-10 mb-10 justify-center items-center">No contents available</p>
         @endif
-
     </div>
     <div class="container d-flex justify-content-center align-items-center h-100 mt-5" id="product">
         {{ $courses->links() }}

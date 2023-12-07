@@ -22,17 +22,51 @@ class ContentController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function createContent($idcourse)
     {
-        //
+        if (Auth::check()) {
+            if (Auth::user()->role == 'admin') {
+                return view('Admin/create-content', ['idcourse' => $idcourse]);
+            } elseif (Auth::user()->role == 'teacher') {
+                return view('Teacher/create-content', ['idcourse' => $idcourse]);
+            } elseif (Auth::user()->role == 'student'){
+                return view('Student/dashboard');
+            }
+        }
     }
+    public function create() {
+
+    }
+    
 
     /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
     {
-        //
+       
+        if (Auth::check()) {
+            if (Auth::user()->role == 'admin') {
+                return view('Admin/dashboard');
+            } elseif (Auth::user()->role == 'teacher') {
+                $request->validate([
+                    'title' => ['required', 'string', 'max:255'],
+                    'content' => ['required', 'string']
+                ]);
+        
+                $content = Content::create([
+                    'title' => $request->title,
+                    'content' => $request->content,
+                    'course_id' => $request->course_id
+                ]);
+        
+                return view('Teacher/create-content', ['idcourse' => $request->course_id]);
+
+            } elseif (Auth::user()->role == 'student'){
+                return view('Student/dashboard');
+            }
+        }
+        return view('guess/home');
     }
 
     /**
@@ -52,7 +86,10 @@ class ContentController extends Controller
             if (Auth::user()->role == 'admin') {
                 $data = Content::find($id)->get();
                 return view('Admin/edit-content', ['data'=>$data]);
-            } 
+            } elseif (Auth::user()->role == 'teacher') {
+                $data = Content::find($id)->get();
+                return view('Teacher/edit-content', ['data'=>$data]);
+            }
         }
         return view('guess/home');
     }
@@ -62,22 +99,41 @@ class ContentController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $request->validate([
-                'title' => ['required', 'string', 'max:255'],
-                'content' => ['required', 'string']
-        ]);
-        
-        $content = Content::find($id);
-        
-           
-        $content->update([
-                    'title' => $request->title,
-                    'content' => $request->content,]);
-        
-        $course = Course::find($content->course_id);
-        $content = Content::where('course_id', $course->id)->get();
-        
-        return view('Admin/course-detail', ['course' => $course, 'content' => $content]);
+       
+        if (Auth::check()) {
+            if (Auth::user()->role == 'admin') {
+                $request->validate([
+                    'title' => ['required', 'string', 'max:255'],
+                    'content' => ['required', 'string']
+            ]);
+            
+                $content = Content::find($id);
+                $content->update([
+                            'title' => $request->title,
+                            'content' => $request->content,]);
+                
+                $course = Course::find($content->course_id);
+                $content = Content::where('course_id', $course->id)->get();
+            
+            return view('Admin/course-detail', ['course' => $course, 'content' => $content]);
+            } elseif (Auth::user()->role == 'teacher') {
+                $request->validate([
+                    'title' => ['required', 'string', 'max:255'],
+                    'content' => ['required', 'string']
+            ]);
+            
+            $content = Content::find($id);
+            $content->update([
+                        'title' => $request->title,
+                        'content' => $request->content,]);
+            
+            $course = Course::find($content->course_id);
+            $content = Content::where('course_id', $course->id)->get();
+            
+            return view('Teacher/course-detail', ['course' => $course, 'content' => $content]);
+            }
+        }
+        return view('guess/home');
           
         
     }
@@ -86,14 +142,28 @@ class ContentController extends Controller
      * Remove the specified resource from storage.
      */
     public function destroy(string $id){
-        $content = Content::find($id);
-        $course = Course::find($content->course_id);
-        $content->delete();
-    
-        $contentall = Content::where('course_id', $course->id)->get();
+        if (Auth::check()) {
+            if (Auth::user()->role == 'admin') {
+                $content = Content::find($id);
+                $course = Course::find($content->course_id);
+                $content->delete();
+            
+                $contentall = Content::where('course_id', $course->id)->get();
+                return view('Admin/course-detail', ['course' => $course, 'content' => $contentall]);
+            } elseif (Auth::user()->role == 'teacher') {
+                $content = Content::find($id);
+                $course = Course::find($content->course_id);
+                $content->delete();
+            
+                $contentall = Content::where('course_id', $course->id)->get();
+                return view('Teacher/course-detail', ['course' => $course, 'content' => $contentall]);
 
-        
+            } elseif (Auth::user()->role == 'student'){
+                return view('Student/dashboard');
+            }
+        }
+        return view('guess/home');
 
-        return view('Admin/course-detail', ['course' => $course, 'content' => $contentall]);
+       
      }
 }
