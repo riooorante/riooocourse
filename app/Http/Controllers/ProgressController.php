@@ -20,6 +20,7 @@ class ProgressController extends Controller
     public function create()
     {
         //
+        
     }
 
     /**

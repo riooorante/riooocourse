@@ -5,7 +5,7 @@
 <div class="container flex flex-wrap mx-auto mt-10 mb-10 justify-center items-center">
     <h1 class="mb-5 mt-5 text-4xl font-extrabold tracking-tight leading-none text-dark md:text-5xl lg:text-6xl">Prices</h1>
 </div>
-<div class="container flex flex-wrap mx-auto mt-10 mb-10 justify-center items-center">
+<div class="container flex flex-wrap mx-auto mb-10 justify-center items-center">
     
     <a href="#" class="m-6 flex flex-col items-center bg-white border border-gray-200 rounded-lg shadow md:flex-row md:max-w-xl hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
         <img class="object-cover w-full rounded-t-lg h-96 md:h-auto md:w-96 md:rounded-none " src="../images/college-students.jpg" alt="">

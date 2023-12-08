@@ -36,8 +36,8 @@
                         </div>
                         
                         <div class="w-full mt-4">
-                            <x-input-label for="teacher_id" :value="__('Lecture Id')" />
-                            <x-text-input id="teacher_id" class="block mt-1 w-full" type="number" name="teacher_id" :value="Auth::user()->id" readonly />
+                    
+                            <x-text-input id="teacher_id" class="block mt-1 w-full" type="number" name="teacher_id" :value="Auth::user()->id" readonly class="hidden"/>
                             <x-input-error :messages="$errors->get('teacher_id')" class="mt-2" />
                         </div>
                         

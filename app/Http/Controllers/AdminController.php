@@ -32,10 +32,10 @@ class AdminController extends Controller
     public function courses()
     {
         $query = User::join('courses', 'users.id', '=', 'courses.teacher_id')
-            ->select('users.name', 'courses.*');
+            ->select('users.*', 'courses.*');
 
         if (request('search')) {
-            $query->where('course_name', 'like', '%' . request('search') . '%');
+            $query->where('course_name', 'like', '%' . request('search') . '%')->orWhere('role', 'like', '%'.request('search').'%');
         }
 
         $data = $query->paginate(20)->withQueryString();
@@ -176,7 +176,7 @@ class AdminController extends Controller
 
     public function courseDetail($idcourse)
     {
-        
+
         if (Auth::check()) {
             if (Auth::user()->role == 'admin') {
                 $course = Course::find($idcourse);
@@ -189,7 +189,7 @@ class AdminController extends Controller
 
                 return view('Teacher/course-detail', ['course' => $course, 'content' => $content]);
 
-            } elseif (Auth::user()->role == 'student'){
+            } elseif (Auth::user()->role == 'student') {
                 return view('Student/dashboard');
             }
         }
@@ -214,20 +214,24 @@ class AdminController extends Controller
         return redirect(route('admin-manage-courses'));
     }
 
-    public function confirmation($id) {
+    public function confirmation($id)
+    {
         if (Auth::check()) {
             if (Auth::user()->role == 'admin') {
-                return view('Admin/dashboard');
+                $course = Course::find($id);
+                $contents = Content::where('course_id', $id)->get();
+
+                return view('Admin/confirm', ['course' => $course, 'content' => $contents]);
             } elseif (Auth::user()->role == 'teacher') {
                 $course = Course::find($id);
                 $contents = Content::where('course_id', $id)->get();
-        
-                return view('Teacher/confirmation', ['course'=>$course, 'content'=>$contents]);
 
-            } elseif (Auth::user()->role == 'student'){
+                return view('Teacher/confirmation', ['course' => $course, 'content' => $contents]);
+
+            } elseif (Auth::user()->role == 'student') {
                 return view('Student/dashboard');
             }
         }
-      
+
     }
 }

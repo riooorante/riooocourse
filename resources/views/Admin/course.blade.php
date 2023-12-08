@@ -21,35 +21,49 @@
             <a href="{{ route('admin-create-course') }}" class="inline-flex items-center py-2.5 px-3 ms-2 text-sm font-medium text-white bg-blue-700 rounded-lg border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">+ Add Course</a>
         </div>
     </div>
-    <div class="container flex flex-wrap mx-auto mt-10 mb-10 justify-center items-center">
-        @if(count($courses) > 0)
+ <div class="container flex flex-wrap mx-auto mt-10 mb-10 justify-center items-center">
+        @if (count($courses) > 0)
             @foreach ($courses as $course)
-                <div class="max-w-sm m-10 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
-                    <div class="p-5">
-                        <a href="#">
-                            <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{{$course->course_name}}</h5>
-                        </a>
-                        <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">Course By {{$course->name}}</p>
-                        <div class="container flex flex-wrap mx-auto  justify-center items-center">
-                        <a href="{{ route('admin-course-detail', ['idcourse' => $course->id]) }}" class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+            <div class="max-w-sm m-10 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 h-96">
+                <div class="p-5 h-full flex flex-col justify-between">
+                    <a href="#">
+                        <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+                            {{ $course->course_name }}
+                        </h5>
+                    </a>
+                    <p class="font-normal text-gray-700 dark:text-gray-400">Start {{ $course->start_date }}</p>
+                    <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">Course By {{ $course->name }}</p>
+                    <div class="mb-3 container flex flex-wrap mx-auto justify-center items-center flex-grow">
+                        <p class="text-gray-600 dark:text-gray-400">
+                            {{ \Illuminate\Support\Str::limit($course->description, 150, $end = '...') }}
+                        </p>
+                    </div>
+                    <div class="container flex flex-wrap mx-auto mt-4 justify-center items-center">
+                        <a href="{{ route('admin-course-detail', ['idcourse' => $course->id]) }}"
+                            class="inline-flex items-center px-4 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
                             Read more
                         </a>
-                        <a href="{{ route('admin-edit-course', ['idcourse' => $course->id]) }}" class="m-4 inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                        <a href="{{ route('admin-edit-course', ['idcourse' => $course->id]) }}"
+                            class="mx-4 inline-flex items-center px-4 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
                             Edit
                         </a>
-                        <form action="{{ route('teacher-course.destroy', $course->id) }}" method="POST" onsubmit=" return confirm('Are you sure you want to delete?') ">
-                            {{ csrf_field() }}
-                            {{ method_field('DELETE') }} 
-                            <button type="submit" class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                        <form action="{{ route('admin-course-delete', $course->id) }}" method="POST"
+                            onsubmit="return confirm('Are you sure you want to delete?')">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit"
+                                class="inline-flex items-center px-4 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
                                 Delete
                             </button>
                         </form>
-                        </div>
                     </div>
                 </div>
+            </div>
+            
+            
             @endforeach
         @else
-        <p class="flex flex-wrap mx-auto mt-10 mb-10 justify-center items-center">No contents available</p>
+            <p class="flex flex-wrap mx-auto mt-10 mb-10 justify-center items-center">No contents available</p>
         @endif
     </div>
     <div class="container d-flex justify-content-center align-items-center h-100 mt-5" id="product">

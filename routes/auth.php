@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ContentController;
 use App\Http\Controllers\CourseController;
+use App\Http\Controllers\ProgressController;
 use App\Http\Controllers\UserCourseController;
 use App\Models\Content;
 use Illuminate\Support\Facades\Route;
@@ -154,6 +155,16 @@ Route::middleware('auth')->group(function () {
                 'destroy' => 'studentr-course.destroy',
             ]);
             
-            Route::get('//student/usercourses/showpages/{idcourse}', [ContentController::class, 'showCoursePages'])->name('learning-page');
+            Route::get('/student/usercourses/showpages/{idcourse}', [ContentController::class, 'showCoursePages'])->name('learning-page');
+
+            Route::resource('/student/progress', ProgressController::class)->names([
+                'index' => 'student-progress',
+                'create' => 'student-course.create',
+                'store' => 'student-course.store',
+                'show' => 'student-course.show',
+                'edit' => 'student-course.edit',
+                'update' => 'student-course.update',
+                'destroy' => 'studentr-course.destroy',
+            ]);
         });
 });

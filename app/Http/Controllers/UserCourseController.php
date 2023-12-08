@@ -16,7 +16,7 @@ class UserCourseController extends Controller
         $query = UserCourse::join('courses', 'user_course.course_id', '=', 'courses.id')
                 ->join('users as teacher', 'courses.teacher_id', '=', 'teacher.id')
                 ->where('user_course.user_id', '=', Auth::user()->id)
-                ->select('teacher.name', 'courses.*');
+                ->select('teacher.*', 'courses.*');
             
             if (request('search')) {
                 $query->where(function ($query) {
@@ -39,6 +39,14 @@ class UserCourseController extends Controller
         $data = $query->paginate(10)->withQueryString();
                 
         return view('Student/mycourses', ['courses' => $data]);
+    }
+
+    public function usercoursecount(){
+        $result = UserCourse::join('courses', 'user_course.course_id', '=', 'courses.id')
+                ->join('users as teacher', 'courses.teacher_id', '=', 'teacher.id')
+                ->where('user_course.user_id', '=', Auth::user()->id)
+                ->select('teacher.*', 'courses.*')
+                ->count();
     }
 
     /**
@@ -95,4 +103,6 @@ class UserCourseController extends Controller
     {
         //
     }
+
+
 }
